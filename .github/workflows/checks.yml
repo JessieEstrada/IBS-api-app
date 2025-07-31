@@ -1,0 +1,27 @@
+# This GitHub Actions workflow runs every time you push code to the repository.
+# It logs into Docker Hub, checks out the code, runs Django unit tests, and runs a linter (flake8) to enforce clean code.
+
+name: Checks  # Workflow name that will show in the GitHub Actions tab
+
+on: [push]  # Trigger this workflow every time code is pushed to the repository
+
+jobs:
+  test-lint:  # Name of the job inside the workflow
+    name: Test and Lint  # Display name of the job
+    runs-on: ubuntu-24.04  # Use an Ubuntu virtual machine to run the job
+
+    steps:
+      - name: Login to Docker Hub  # Step 1: Login so we avoid rate limits or errors pulling Docker images
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} 
+
+      - name: Checkout  # Step 2: Download (clone) your repository code into the GitHub Actions runner
+        uses: actions/checkout@v4
+
+      - name: Test  # Step 3: Run Django unit tests inside the Docker container
+        run: docker compose run --rm app sh -c "python manage.py test"
+
+      - name: Lint  # Step 4: Run flake8 linter to check for Python code style issues
+        run: docker compose run --rm app sh -c "flake8"

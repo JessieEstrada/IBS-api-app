@@ -1,0 +1,18 @@
+# This file sets up and runs the Django app in Docker
+# It builds the image, maps port 8000 so you can access it in the browser,
+# mounts your local app folder into the container, and starts the Django server
+
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
