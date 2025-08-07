@@ -1,1 +1,1 @@
-# recipe-api-app
+# IBS-api-app
